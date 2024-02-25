@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "hueniverse"
+version = "0.1.0"
+description = ""
+authors = ["Jeremy <jeremy.schiemann@googlemail.com>"]
+maintainers = ["Jeremy <jeremy.schiemann@googlemail.com>"]
+readme = "README.md"
+homepage = "https://github.com/jeremyschiemann/hueniverse"
+repository = "https://github.com/jeremyschiemann/hueniverse"
+keywords = ["hue", "async", "api", "philips hue"]
+packages = [{ include = "hueniverse" }]
+
+
+[tool.poetry.dependencies]
+python = ">=3.8"
+httpx = "^0.27.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

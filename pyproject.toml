@@ -20,11 +20,6 @@ pydantic = "^2.6.2"
 [tool.poetry.group.dev.dependencies]
 bump2version = "^1.0.1"
 
-[tool.bumpversion]
-current_version = "0.0.2"
-commit = false
-tag = false
-
 
 [build-system]
 requires = ["poetry-core"]

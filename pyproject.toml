@@ -15,6 +15,7 @@ packages = [{ include = "hueniverse" }]
 python = ">=3.11"
 httpx = "^0.27.0"
 pydantic = "^2.6.2"
+cryptography = "^42.0.5"
 
 
 [tool.poetry.group.dev.dependencies]

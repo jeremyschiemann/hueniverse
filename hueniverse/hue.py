@@ -124,7 +124,7 @@ class AsyncBridge:
         """Get a light by its resource identifier."""
 
         res = await self._get_resource(ResourceType.LIGHT, resource_identifier)
-        return Light(**res[0])
+        return Light(bridge=self, **res[0])
 
 
     async def create_app_key(self, app_name: str, instance_name: str) -> AppKeyResponse:

@@ -3,7 +3,6 @@ from __future__ import annotations
 import ssl
 from typing import List, Dict, Any
 from cryptography.x509 import load_pem_x509_certificate
-import certifi
 import httpx
 
 from hueniverse.hue_types import DiscoveredBridge, ResourceType, AppKeyResponse, Light
@@ -67,10 +66,29 @@ class AsyncBridge:
         await self._client.aclose()
 
 
+
+    async def put_resource(
+        self,
+        resource_type: ResourceType,
+        resource_identifier: str,
+        data: Dict[str, Any],
+    ):
+        assert self._app_key is not None, 'App key is required for this operation'
+
+        url = f'{self._url}/{resource_type.value}/{resource_identifier}'
+
+        response = await self._client.put(
+            url=url,
+            headers={'hue-application-key': self._app_key},
+            json=data,
+        )
+        response.raise_for_status()
+        return response.json()
+
+
     async def _get_resource(
         self,
-        resource_type:
-        ResourceType,
+        resource_type: ResourceType,
         resource_identifier: str | None = None,
     ) -> List[Dict[str, Any]]:
 
@@ -99,7 +117,7 @@ class AsyncBridge:
     async def get_lights(self) -> List[Light]:
         """Get a list of lights connected to the bridge."""
 
-        return [Light(**x) for x in await self._get_resource(ResourceType.LIGHT)]
+        return [Light(bridge=self, **x) for x in await self._get_resource(ResourceType.LIGHT)]
 
 
     async def get_light_by_id(self, resource_identifier: str) -> Light:

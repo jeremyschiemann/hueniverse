@@ -1,7 +1,7 @@
-from typing import List
-
 from pydantic import BaseModel, Field, ConfigDict
 from enum import Enum
+from typing import Any
+
 
 
 class DiscoveredBridge(BaseModel):
@@ -126,15 +126,6 @@ class ResourceIdentifier(BaseModel):
     rid: str
     rtype: ResourceType
 
-class Device(BaseModel):
-    type: ResourceType
-    id: str
-    id_v1: str
-    product_data: ProductData
-    metadata: Metadata
-    usertest: Usertest
-    services: List[ResourceIdentifier]
-
 class LightMetadata(Metadata):
     function: str
 
@@ -173,12 +164,16 @@ class Color(BaseModel):
     gamut: Gamut
     gamut_type: GamutType
 
-class Light(BaseModel):
 
+class Resource(BaseModel):
     model_config = ConfigDict(
         extra='allow',
     )
 
+    bridge: Any
+
+
+class Light(Resource):
     type: ResourceType
     id: str
     id_v1: str
@@ -189,6 +184,30 @@ class Light(BaseModel):
     color_temperature: ColorTemperature | None = None
     color: Color | None = None
 
+
+    async def _put_on(self):
+        return await self.bridge.put_resource(
+            resource_type=self.type,
+            resource_identifier=self.id,
+            data=self.model_dump(include={'on'})
+        )
+
+    async def turn_on(self):
+        """Turn the light on."""
+        self.on.on = True
+        await self._put_on()
+
+    async def turn_off(self):
+        """Turn the light off."""
+        self.on.on = False
+        await self._put_on()
+
+    async def toggle_on(self):
+        """Toggle the light on and off."""
+        self.on.on = not self.on.on
+        await self._put_on()
+
+
     #dynamics: Dynamics
     #alert: Alert
     #signaling: Signaling
@@ -197,3 +216,5 @@ class Light(BaseModel):
     #effects: Effects
     #timed_effects: TimedEffects
     #powerup: Powerup
+
+
